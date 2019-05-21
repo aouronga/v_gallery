@@ -1,1 +1,1 @@
-# v_gallery
+# Opencart Video Gallery Extension Module
