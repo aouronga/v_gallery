@@ -21,13 +21,13 @@ class ControllerExtensionModuleVGallery extends Controller{
        $data['current_language'] = $current_language_id;
 
         if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
-            if(isset($_POST['add_new_gallery'])){
-                $query = "INSERT INTO `" . DB_PREFIX . "v_gallery` (`name`, `description`, `language_id`) VALUES ('" . $_POST['gallery_name'][$current_language_id] . "', '" . $_POST['description'][$current_language_id] . "', '" . $current_language_id . "')";
+            if(isset($this->request->post['add_new_gallery'])){
+                $query = "INSERT INTO `" . DB_PREFIX . "v_gallery` (`name`, `description`, `language_id`) VALUES ('" . $this->request->post['gallery_name'][$current_language_id] . "', '" . $this->request->post['description'][$current_language_id] . "', '" . $current_language_id . "')";
                 $this->db->query($query);
                 $lastId = $this->db->getLastId();
                 foreach ($data['languages'] as $language) {
                     $id = $language['language_id'];
-                    $query = "INSERT INTO `" . DB_PREFIX . "v_gallery_lang` (`name`, `v_gallery_id`, `description`, `language_id`) VALUES ('" . $_POST['gallery_name'][$id] . "','" . $lastId . "', '" . $_POST['description'][$id] . "', '" . $id . "')";
+                    $query = "INSERT INTO `" . DB_PREFIX . "v_gallery_lang` (`name`, `v_gallery_id`, `description`, `language_id`) VALUES ('" . $this->request->post['gallery_name'][$id] . "','" . $lastId . "', '" . $this->request->post['description'][$id] . "', '" . $id . "')";
                     $this->db->query($query);
                 }
                     $this->session->data['success'] = $this->language->get('text_success');
@@ -35,32 +35,32 @@ class ControllerExtensionModuleVGallery extends Controller{
 
             }
 
-            if(isset($_POST['add_new_gallery_item'])){
+            if(isset($this->request->post['add_new_gallery_item'])){
                 $query = "INSERT INTO `".DB_PREFIX."v_gallery_items` (`v_gallery_id`, `title`, `description`, `src`, `language_id`) 
-                VALUES ('".$_POST['v_gallery_id']."', '".$_POST['title'][$current_language_id]."', '".$_POST['description'][$current_language_id]."', '".$_POST['src']."', '".$current_language_id."')";
+                VALUES ('".$this->request->post['v_gallery_id']."', '".$this->request->post['title'][$current_language_id]."', '".$this->request->post['description'][$current_language_id]."', '".$this->request->post['src']."', '".$current_language_id."')";
                 $this->db->query($query);
                 $lastId = $this->db->getLastId();
 
                 foreach ($data['languages'] as $language) {
                     $id = $language['language_id'];
                     $query = "INSERT INTO `".DB_PREFIX."v_gallery_items_lang` (`v_gallery_item_id`, `title`, `description`, `language_id`) 
-                VALUES ('".$lastId."', '".$_POST['title'][$id]."', '".$_POST['description'][$id]."', '".$id."')";
+                VALUES ('".$lastId."', '".$this->request->post['title'][$id]."', '".$this->request->post['description'][$id]."', '".$id."')";
                     $this->db->query($query);
                 }
 
                 $this->session->data['success'] = $this->language->get('text_success');
-                $this->response->redirect($this->url->link('extension/module/v_gallery', 'user_token=' . $this->session->data['user_token'] . '&type=module&v_gallery_id='.$_POST['v_gallery_id'], true));
+                $this->response->redirect($this->url->link('extension/module/v_gallery', 'user_token=' . $this->session->data['user_token'] . '&type=module&v_gallery_id='.$this->request->post['v_gallery_id'], true));
 
             }
 
-            if(isset($_POST['update_gallery'])){
-                $query = "UPDATE `" .DB_PREFIX."v_gallery` SET `name`='".$_POST['gallery_name'][$current_language_id]."', `description`='".$_POST['description'][$current_language_id]."', `language_id`='".$current_language_id."' WHERE `v_gallery_id`='".$_POST['gallery_id']."'";
+            if(isset($this->request->post['update_gallery'])){
+                $query = "UPDATE `" .DB_PREFIX."v_gallery` SET `name`='".$this->request->post['gallery_name'][$current_language_id]."', `description`='".$this->request->post['description'][$current_language_id]."', `language_id`='".$current_language_id."' WHERE `v_gallery_id`='".$this->request->post['gallery_id']."'";
 //                print_r($query).die();
                 $this->db->query($query);
 //                $lastId = $this->db->getLastId();
                 foreach ($data['languages'] as $language) {
                     $id = $language['language_id'];
-                    $query = "UPDATE `" . DB_PREFIX . "v_gallery_lang` SET `name`='".$_POST['gallery_name'][$id]."', `description`='".$_POST['description'][$id]."' WHERE `v_gallery_id`='".$_POST['gallery_id']."' AND `language_id`='".$language['language_id']."'";
+                    $query = "UPDATE `" . DB_PREFIX . "v_gallery_lang` SET `name`='".$this->request->post['gallery_name'][$id]."', `description`='".$this->request->post['description'][$id]."' WHERE `v_gallery_id`='".$this->request->post['gallery_id']."' AND `language_id`='".$language['language_id']."'";
                     $this->db->query($query);
                 }
                     $this->session->data['success'] = $this->language->get('text_success');
@@ -69,17 +69,17 @@ class ControllerExtensionModuleVGallery extends Controller{
 
             }
 
-            if(isset($_POST['update_gallery_item'])){
-                $query = "UPDATE `" .DB_PREFIX."v_gallery_items` SET `title`='".$_POST['title'][$current_language_id]."', `description`='".$_POST['description'][$current_language_id]."', `src`='".$_POST['src']."', `language_id`='".$current_language_id."' WHERE `v_gallery_item_id`='".$_POST['v_gallery_item_id']."'";
+            if(isset($this->request->post['update_gallery_item'])){
+                $query = "UPDATE `" .DB_PREFIX."v_gallery_items` SET `title`='".$this->request->post['title'][$current_language_id]."', `description`='".$this->request->post['description'][$current_language_id]."', `src`='".$this->request->post['src']."', `language_id`='".$current_language_id."' WHERE `v_gallery_item_id`='".$this->request->post['v_gallery_item_id']."'";
                 $this->db->query($query);
                 foreach ($data['languages'] as $language) {
                     $id = $language['language_id'];
-                    $query_lang = "UPDATE `" . DB_PREFIX . "v_gallery_items_lang` SET `title`='".$_POST['title'][$id]."', `description`='".$_POST['description'][$id]."' WHERE `v_gallery_item_id`='".$_POST['v_gallery_item_id']."' AND `language_id`='".$language['language_id']."'";
+                    $query_lang = "UPDATE `" . DB_PREFIX . "v_gallery_items_lang` SET `title`='".$this->request->post['title'][$id]."', `description`='".$this->request->post['description'][$id]."' WHERE `v_gallery_item_id`='".$this->request->post['v_gallery_item_id']."' AND `language_id`='".$language['language_id']."'";
                     $this->db->query($query_lang);
                 }
                 //here
                 $this->session->data['success'] = $this->language->get('text_success');
-                $this->response->redirect($this->url->link('extension/module/v_gallery', 'user_token=' . $this->session->data['user_token'] . '&type=module&v_gallery_id='.$_POST['v_gallery_id'], true));
+                $this->response->redirect($this->url->link('extension/module/v_gallery', 'user_token=' . $this->session->data['user_token'] . '&type=module&v_gallery_id='.$this->request->post['v_gallery_id'], true));
             }
 
         }
